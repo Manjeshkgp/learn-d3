@@ -9,15 +9,15 @@ function App() {
     svg.attr("width", width).attr("height", height);
 
     const n = 100;
-    
+
     svg
-      .selectAll("rect.horizontal")
+      .append("g")
+      .selectAll("rect")
       .data(range(n))
       .join("rect")
       .attr("y", (d) => d * 20)
       .attr("width", width)
       .attr("height", 10)
-      .attr("class", "horizontal")
       .attr("mask", "url(#circle-mask)");
 
     const circleMask = svg.append("mask").attr("id", "circle-mask");
@@ -30,13 +30,13 @@ function App() {
       .attr("fill", "white");
 
     svg
-      .selectAll("rect.vertical")
+      .append("g")
+      .selectAll("rect")
       .data(range(n))
       .join("rect")
       .attr("x", (d) => d * 20)
       .attr("width", 10)
       .attr("height", height)
-      .attr("class", "vertical")
       .attr("mask", "url(#mask2)");
 
     const mask2 = svg.append("mask").attr("id", "mask2");
@@ -45,8 +45,8 @@ function App() {
       .attr("width", width)
       .attr("height", height)
       .attr("fill", "white");
-      // appended a circle to stop the layout crashing of the circle mask
-      // appended after the rect only works
+    // appended a circle to stop the layout crashing of the circle mask
+    // appended after the rect only works
     mask2
       .append("circle")
       .attr("cx", width / 2)
