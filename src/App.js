@@ -1,4 +1,4 @@
-import { select, range } from "d3";
+import { select, range, symbol, symbols } from "d3";
 import { useEffect } from "react";
 
 function App() {
@@ -18,41 +18,38 @@ function App() {
       .attr("y", (d) => d * 20)
       .attr("width", width)
       .attr("height", 10)
-      .attr("mask", "url(#circle-mask)");
-
-    const circleMask = svg.append("mask").attr("id", "circle-mask");
-    const smallRadius = width > height ? height / 3 : width / 3;
-    circleMask
-      .append("circle")
-      .attr("cx", width / 2)
-      .attr("cy", height / 2)
-      .attr("r", smallRadius)
-      .attr("fill", "white");
+      .attr("mask", "url(#mask1)");
 
     svg
       .append("g")
       .selectAll("rect")
-      .data(range(n))
+      .data(range(width/10))
       .join("rect")
       .attr("x", (d) => d * 20)
       .attr("width", 10)
       .attr("height", height)
       .attr("mask", "url(#mask2)");
-
-    const mask2 = svg.append("mask").attr("id", "mask2");
-    mask2
-      .append("rect")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("fill", "white");
-    // appended a circle to stop the layout crashing of the circle mask
-    // appended after the rect only works
-    mask2
-      .append("circle")
-      .attr("cx", width / 2)
-      .attr("cy", height / 2)
-      .attr("r", smallRadius)
-      .attr("fill", "black");
+    const renderMask = (selection, id, inverted) => {
+      const mask = selection.append("mask").attr("id", id);
+      mask
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", inverted ? "white" : "black");
+      mask
+        .selectAll("g")
+        .data(range(symbols.length))
+        .join((enter) =>
+          enter
+            .append("g")
+            .attr("transform",d=>`translate(${d*width/6},${height/2})`)
+            .append("path")
+            .attr("d", (d) => symbol(symbols[d], width * 20)())
+            .attr("fill", inverted ? "black" : "white")
+        );
+    };
+    renderMask(svg, "mask1", true);
+    renderMask(svg, "mask2", false);
   }, [height, width]);
 
   return null;
